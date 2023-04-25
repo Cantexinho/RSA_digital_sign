@@ -1,20 +1,32 @@
 import asyncio
-import json
 import websockets
 
-async def receive_message(websocket, path):
-    data = await websocket.recv()
-    message_data = json.loads(data)
+clients = []
 
-    print(message_data)
+async def handle_client(websocket, path):
+    clients.append(websocket)
+    print(f"Client connected. Total clients: {len(clients)}")
 
+    if len(clients) == 2:
+        sender = clients[0]
+        receiver = clients[1]
 
-async def forward_message(websocket, path):
-    return
+        message_data = await sender.recv()
+        print(message_data)
+        await receiver.send(message_data)
 
+        await sender.close()
+        await receiver.close()
+
+        clients.remove(sender)
+        clients.remove(receiver)
+        print("Clients disconnected.")
+    else:
+        print("Waiting for more clients...")
 
 if __name__ == "__main__":
-    start_server = websockets.serve(receive_message, "localhost", 8080)
-    print("Server running")
+    start_server = websockets.serve(handle_client, "localhost", 8080)
+    print("Server started")
+
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()
