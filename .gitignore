@@ -1,0 +1,42 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+env/
+.env
+bin/
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyCharm files
+.idea/
+
+# macOS files
+.DS_Store
+
+# Pytest cache
+pytest_cache/
+
+# Jupyter Notebook checkpoint files
+.ipynb_checkpoints/
+
+# Python virtual environment
+venv/
+
+# Service account
+service_account.json
