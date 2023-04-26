@@ -14,10 +14,8 @@ def generate_cipher_keys() -> list:
 
 
 async def send_message(private_key: object, public_key: object):
-    async with websockets.connect("ws://localhost:8080") as websocket:
-        message = input("Enter the message to send: ")
-
-        signature = private_key.sign(
+    def _generate_signature(private_key: object) -> object:
+        return private_key.sign(
             message.encode(),
             padding.PSS(
                 mgf=padding.MGF1(hashes.SHA256()),
@@ -25,6 +23,11 @@ async def send_message(private_key: object, public_key: object):
             ),
             hashes.SHA256()
         )
+    
+    async with websockets.connect("ws://localhost:8080") as websocket:
+        message = input("Enter the message to send: ")
+
+        signature = _generate_signature(private_key)
         signature_base64 = base64.b64encode(signature).decode()
 
         data = {
@@ -37,7 +40,6 @@ async def send_message(private_key: object, public_key: object):
         }
 
         await websocket.send(json.dumps(data))
-
         print("Message sent.")
 
 if __name__ == "__main__":

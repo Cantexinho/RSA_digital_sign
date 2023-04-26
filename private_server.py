@@ -1,13 +1,13 @@
 import asyncio
-import websockets
+from websockets.server import serve
 
 clients = []
 
-async def handle_client(websocket, path):
+async def handle_client(websocket, path) -> None:
     clients.append(websocket)
-    print(f"Client connected. Total clients: {len(clients)}")
 
     if len(clients) == 2:
+        print("Clients connected")
         sender = clients[0]
         receiver = clients[1]
 
@@ -18,14 +18,11 @@ async def handle_client(websocket, path):
         await sender.close()
         await receiver.close()
 
-        clients.remove(sender)
-        clients.remove(receiver)
-        print("Clients disconnected.")
     else:
         print("Waiting for more clients...")
 
 if __name__ == "__main__":
-    start_server = websockets.serve(handle_client, "localhost", 8080)
+    start_server = serve(handle_client, "localhost", 8080)
     print("Server started")
 
     asyncio.get_event_loop().run_until_complete(start_server)
